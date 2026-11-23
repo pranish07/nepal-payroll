@@ -10,7 +10,14 @@ SERVER_PID=""
 
 cleanup() {
   if [[ -n "$SERVER_PID" ]] && kill -0 "$SERVER_PID" 2>/dev/null; then
-    kill "$SERVER_PID" 2>/dev/null || true
+    case "$(uname -s)" in
+      MINGW*|MSYS*|CYGWIN*)
+        taskkill //PID "$SERVER_PID" //T //F >/dev/null 2>&1 || true
+        ;;
+      *)
+        kill "$SERVER_PID" 2>/dev/null || true
+        ;;
+    esac
     wait "$SERVER_PID" 2>/dev/null || true
   fi
   rm -rf "$TMP"
