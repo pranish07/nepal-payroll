@@ -68,6 +68,16 @@ Fiscal years and periods store explicit ISO Gregorian dates. There is no Bikram 
 
 No rate is hard-coded in the engine. Policy rows carry SSF employee/employer bps, retirement cap and share denominator, OT multiplier/divisor/hours-per-day, security fund bps, advance recovery cap bps, and a reference to an immutable tax slab set. `resolvePolicyForPeriod()` selects the latest version with `effective_from_seq <= period.seq`. Policies are append-only; the API exposes creation but no update/delete.
 
+## Responsive UI
+
+The web app (`apps/web`) is mobile-first:
+
+- `components/Layout.tsx` switches between a desktop top bar and a right-hand `Drawer` navigation on small screens, with a compact brand and role switcher that fit narrow viewports.
+- Shared `components/Card.tsx` and `components/PageHeader.tsx` give pages a consistent card surface and responsive title/action row.
+- Tables are wrapped in horizontally scrollable containers (`overflowX="auto"`) with `variant="simple"` and `size="sm"`, so wide payrolls remain usable on phones.
+- Filters and action rows use `Stack`/`Flex` with `base`/`md` responsive props instead of fixed widths.
+- Money is always rendered through `formatNprPaisa()` (one `NPR` label, one decimal dot) after the double-dot fix.
+
 ## Deployment shape
 
 `npm start` runs `scripts/ensure-web-build.mjs` and then the Fastify server. The server registers the JSON API, the printable payslip routes, and `@fastify/static` for `apps/web/dist`, falling back to `index.html` for client-side routes. A single process serves everything on `http://localhost:3000`.

@@ -69,7 +69,7 @@ packages/core/          pure payroll engine (no I/O, no secret parameter)
 apps/api/               Fastify routes -> services -> repositories -> SQLite
 apps/api/migrations/    committed SQL schema
 apps/api/src/payslip/   server-rendered A4 HTML (employee-facing only)
-apps/web/               React + Vite + Chakra UI + React Router + TanStack Query
+apps/web/               React + Vite + Chakra UI + React Router + TanStack Query (responsive, mobile drawer nav)
 scripts/                sample generation, web build check, clean-clone check
 docs/                   architecture, decisions, rules, data model, test plan
 ```
