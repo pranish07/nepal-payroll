@@ -112,4 +112,4 @@ npm run verify
 
 The script clones the repo (or copies the working tree if there is no origin) into a fresh temp directory, runs `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm start`, probes the API and web HTML, checks documented clean-clone wall time, and prints an artifact summary.
 
-Measured clean-clone time on this machine (Windows, Node 25.1.0, including `npm ci`, lint, typecheck, all tests, web build, and live HTTP/API/payslip probes): **113 seconds** (an earlier run measured 101 seconds). The script prints the exact `CLEAN_CLONE_SECONDS` value on every run.
+Measured clean-clone time on this machine (Windows, Node 25.1.0, including `npm ci`, lint, typecheck, all tests, web build, and live HTTP/API/payslip probes): **118 seconds** when cloned from the public GitHub repository (earlier runs: 101 s and 113 s). The script prints the exact `CLEAN_CLONE_SECONDS` value on every run.
