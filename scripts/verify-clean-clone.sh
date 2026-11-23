@@ -30,6 +30,10 @@ fi
 
 START_TS=$(date +%s)
 cd "$TMP/repo"
+if [[ ! -f package-lock.json || ! -f package.json ]]; then
+  echo "[verify] Clean checkout is missing package manifests." >&2
+  exit 1
+fi
 
 echo "[verify] npm ci"
 npm ci --no-audit --no-fund >/dev/null
