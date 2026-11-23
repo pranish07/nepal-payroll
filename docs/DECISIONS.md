@@ -129,3 +129,11 @@ Ambiguities in the brief were resolved with the following Architecture Decision 
 **Decision.** Persist `employee_snapshot_json` on `payslips` and render the employee-facing view from it; bank account is masked at render time.
 
 **Consequences.** Finalized documents are self-contained; the admin cost view joins current employee codes for convenience but amounts come from snapshots.
+
+## ADR-017 — Disable npm install scripts for bundled native prebuilds
+
+**Context.** `better-sqlite3@13` ships prebuilt `.node` binaries in its npm tarball for Linux, macOS, and Windows. npm 11 nevertheless auto-runs `node-gyp rebuild` for any package with `binding.gyp` and no `install` script. On machines without Visual Studio / a C++ toolchain, a clean `npm install` or `npm ci` then fails even though the working binary is already present.
+
+**Decision.** Commit a root `.npmrc` with `ignore-scripts=true`. No dependency in this project needs a lifecycle script: esbuild/Vite use optional platform packages, and better-sqlite3 loads its bundled prebuild at require time.
+
+**Consequences.** Clean installs work on a bare Node installation. Risk: a future dependency that genuinely needs a postinstall step would need an explicit exception or an ADR revision.

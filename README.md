@@ -22,6 +22,8 @@ Then open **http://localhost:3000**. `npm start`:
 
 The database is written to `data/payroll.db` by default. Override with `DB_PATH=:memory:` or another path; override the port with `PORT=...`.
 
+A committed `.npmrc` sets `ignore-scripts=true` (ADR-017): `better-sqlite3@13` ships prebuilt binaries in its tarball, and npm 11 otherwise tries a `node-gyp` rebuild on machines without a C++ toolchain. No dependency here needs a lifecycle script.
+
 ### Try it
 
 ```bash
