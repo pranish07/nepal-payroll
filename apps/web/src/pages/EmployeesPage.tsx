@@ -6,6 +6,7 @@ import {
   FormLabel,
   HStack,
   Heading,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -16,12 +17,14 @@ import {
   ModalOverlay,
   Select,
   SimpleGrid,
+  Stack,
   Table,
   TableContainer,
   Tbody,
   Td,
   Text,
   Th,
+  Tooltip,
   Thead,
   Tr,
   useDisclosure,
@@ -30,6 +33,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { ViewIcon } from '@chakra-ui/icons';
 import { QueryState } from '../components/PageState';
 import { ApiError, api } from '../lib/api';
 import { formatNprPaisa, parseNprToPaisa } from '../lib/format';
@@ -130,16 +134,21 @@ export function EmployeesPage() {
         )}
       </HStack>
 
-      <HStack mb={4} spacing={3} wrap="wrap">
+      <Stack
+        direction={{ base: 'column', md: 'row' }}
+        mb={4}
+        spacing={3}
+        align={{ base: 'stretch', md: 'center' }}
+      >
         <Input
           placeholder="Search code, name, or department"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          maxW="320px"
+          maxW={{ base: '100%', md: '320px' }}
           bg="white"
         />
         <Select
-          maxW="180px"
+          maxW={{ base: '100%', md: '180px' }}
           bg="white"
           value={typeFilter}
           onChange={(event) => setTypeFilter(event.target.value as typeof typeFilter)}
@@ -149,7 +158,7 @@ export function EmployeesPage() {
           <option value="NON_SSF">Non-SSF</option>
         </Select>
         <Select
-          maxW="160px"
+          maxW={{ base: '100%', md: '160px' }}
           bg="white"
           value={statusFilter}
           onChange={(event) => setStatusFilter(event.target.value as typeof statusFilter)}
@@ -158,7 +167,7 @@ export function EmployeesPage() {
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>
         </Select>
-      </HStack>
+      </Stack>
 
       <QueryState isLoading={employees.isLoading} error={employees.error}>
         <TableContainer bg="white" borderRadius="lg" boxShadow="sm">
@@ -171,6 +180,7 @@ export function EmployeesPage() {
                 <Th>Type</Th>
                 <Th>Status</Th>
                 <Th isNumeric>Basic (monthly)</Th>
+                <Th>View</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -195,6 +205,19 @@ export function EmployeesPage() {
                     </Badge>
                   </Td>
                   <Td isNumeric>{formatNprPaisa(employee.basicPaisa)}</Td>
+                  <Td>
+                    <Tooltip label="View employee details" placement="top">
+                      <IconButton
+                        as={RouterLink}
+                        to={`/employees/${employee.id}`}
+                        aria-label={`View details for ${employee.fullName}`}
+                        icon={<ViewIcon />}
+                        size="sm"
+                        variant="ghost"
+                        colorScheme="brand"
+                      />
+                    </Tooltip>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
