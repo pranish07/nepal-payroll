@@ -7,9 +7,10 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP="$(mktemp -d)"
 PORT="${VERIFY_PORT:-3210}"
 SERVER_PID=""
+CLEANED=0
 
-cleanup() {
-  if [[ -n "$SERVER_PID" ]] && kill -0 "$SERVER_PID" 2>/dev/null; then
+stop_server() {
+  if [[ -n "$SERVER_PID" ]]; then
     case "$(uname -s)" in
       MINGW*|MSYS*|CYGWIN*)
         taskkill //PID "$SERVER_PID" //T //F >/dev/null 2>&1 || true
@@ -18,9 +19,17 @@ cleanup() {
         kill "$SERVER_PID" 2>/dev/null || true
         ;;
     esac
-    wait "$SERVER_PID" 2>/dev/null || true
+    SERVER_PID=""
+    sleep 2
   fi
-  rm -rf "$TMP"
+}
+
+cleanup() {
+  if [[ "$CLEANED" -eq 0 ]]; then
+    stop_server
+    rm -rf "$TMP" 2>/dev/null || true
+    CLEANED=1
+  fi
 }
 trap cleanup EXIT
 
@@ -96,4 +105,7 @@ FORBIDDEN="$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:$PORT/api/
 ARTIFACTS="$(find "$TMP/repo/samples" -maxdepth 1 -type f | wc -l | tr -d ' ')"
 echo "[verify] samples artifacts: $ARTIFACTS"
 echo "[verify] CLEAN_CLONE_SECONDS=$ELAPSED"
+stop_server
+rm -rf "$TMP" 2>/dev/null || true
+CLEANED=1
 echo "[verify] OK"
