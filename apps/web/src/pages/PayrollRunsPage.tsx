@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   HStack,
-  Heading,
   Table,
   TableContainer,
   Tbody,
@@ -16,6 +15,8 @@ import {
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Card } from '../components/Card';
+import { PageHeader } from '../components/PageHeader';
 import { QueryState } from '../components/PageState';
 import { ApiError, api } from '../lib/api';
 import { formatDate, formatNprPaisa } from '../lib/format';
@@ -52,20 +53,16 @@ export function PayrollRunsPage() {
 
   return (
     <Box>
-      <HStack justify="space-between" align="flex-end" mb={6}>
-        <Box>
-          <Heading size="lg">Payroll periods</Heading>
-          <Text color="gray.600">
-            Fiscal year 2083/84 · twelve monthly periods. Calculations use the policy version
-            effective for the period.
-          </Text>
-        </Box>
-        {role === 'employee' && <Badge colorScheme="green">Read-only employee view</Badge>}
-      </HStack>
+      <PageHeader
+        title="Payroll periods"
+        description="Fiscal year 2083/84 · twelve monthly periods. Calculations use the policy version effective for the period."
+        actions={role === 'employee' ? <Badge colorScheme="green">Read-only employee view</Badge> : undefined}
+      />
 
       <QueryState isLoading={periods.isLoading} error={periods.error}>
-        <TableContainer bg="white" borderRadius="lg" boxShadow="sm">
-          <Table size="sm">
+        <Card p={0} overflow="hidden">
+          <TableContainer overflowX="auto">
+            <Table size="sm" variant="simple">
             <Thead bg="gray.50">
               <Tr>
                 <Th>Period</Th>
@@ -118,7 +115,8 @@ export function PayrollRunsPage() {
               ))}
             </Tbody>
           </Table>
-        </TableContainer>
+          </TableContainer>
+        </Card>
       </QueryState>
 
       <HStack mt={4} color="gray.500" fontSize="sm" spacing={4}>

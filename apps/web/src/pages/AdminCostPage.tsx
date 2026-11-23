@@ -1,6 +1,8 @@
-import { Alert, AlertIcon, Badge, Box, Heading, HStack, Select, SimpleGrid, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Alert, AlertIcon, Badge, Box, Select, SimpleGrid, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import { Card } from '../components/Card';
+import { PageHeader } from '../components/PageHeader';
 import { QueryState } from '../components/PageState';
 import { api } from '../lib/api';
 import { formatNprPaisa } from '../lib/format';
@@ -35,45 +37,43 @@ export function AdminCostPage() {
     <QueryState isLoading={view.isLoading} error={view.error}>
       {view.data && (
         <Box>
-          <HStack justify="space-between" align="flex-end" mb={5} wrap="wrap">
-            <Box>
-              <Heading size="lg">Admin cost view</Heading>
-              <Text color="gray.600">
-                {view.data.period.label} · {view.data.status}. Secret compensation and company cost
-                are never part of the employee payslip.
-              </Text>
-            </Box>
-            <Select
-              size="sm"
-              width="160px"
-              bg="white"
-              value={group}
-              onChange={(event) => setGroup(event.target.value as typeof group)}
-            >
-              <option value="ALL">All employees</option>
-              <option value="SSF">SSF only</option>
-              <option value="NON_SSF">Non-SSF only</option>
-            </Select>
-          </HStack>
+          <PageHeader
+            title="Admin cost view"
+            description={`${view.data.period.label} · ${view.data.status}. Secret compensation and company cost are never part of the employee payslip.`}
+            actions={
+              <Select
+                size="sm"
+                width="160px"
+                bg="white"
+                value={group}
+                onChange={(event) => setGroup(event.target.value as typeof group)}
+              >
+                <option value="ALL">All employees</option>
+                <option value="SSF">SSF only</option>
+                <option value="NON_SSF">Non-SSF only</option>
+              </Select>
+            }
+          />
 
           <SimpleGrid columns={{ base: 2, md: 4 }} spacing={3} mb={5}>
-            <Card label="Secret component" value={formatNprPaisa(view.data.totals.secretPaisa ?? 0)} />
-            <Card
+            <StatCard label="Secret component" value={formatNprPaisa(view.data.totals.secretPaisa ?? 0)} />
+            <StatCard
               label="Employer SSF"
               value={formatNprPaisa(view.data.totals.ssfEmployerPaisa)}
             />
-            <Card
+            <StatCard
               label="Company cost"
               value={formatNprPaisa(view.data.totals.companyCostPaisa ?? 0)}
             />
-            <Card
+            <StatCard
               label="Paid to employees"
               value={formatNprPaisa(view.data.totals.paidOutToEmployeePaisa ?? 0)}
             />
           </SimpleGrid>
 
-          <TableContainer bg="white" borderRadius="lg" boxShadow="sm">
-            <Table size="sm">
+          <Card p={0} overflow="hidden">
+            <TableContainer overflowX="auto">
+              <Table size="sm" variant="simple">
               <Thead bg="purple.50">
                 <Tr>
                   <Th>Code</Th>
@@ -111,14 +111,15 @@ export function AdminCostPage() {
                 ))}
               </Tbody>
             </Table>
-          </TableContainer>
+            </TableContainer>
+          </Card>
         </Box>
       )}
     </QueryState>
   );
 }
 
-function Card({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <Box bg="white" p={4} borderRadius="lg" boxShadow="sm">
       <Text fontSize="xs" color="gray.500">

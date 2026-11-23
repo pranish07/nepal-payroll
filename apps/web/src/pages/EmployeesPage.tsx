@@ -4,8 +4,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  HStack,
-  Heading,
   IconButton,
   Input,
   Modal,
@@ -34,6 +32,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { ViewIcon } from '@chakra-ui/icons';
+import { Card } from '../components/Card';
+import { PageHeader } from '../components/PageHeader';
 import { QueryState } from '../components/PageState';
 import { ApiError, api } from '../lib/api';
 import { formatNprPaisa, parseNprToPaisa } from '../lib/format';
@@ -119,20 +119,17 @@ export function EmployeesPage() {
 
   return (
     <Box>
-      <HStack justify="space-between" align="flex-end" mb={6}>
-        <Box>
-          <Heading size="lg">Employees</Heading>
-          <Text color="gray.600">
-            {employees.data?.length ?? 0} people on file. Deactivation is a soft delete, so history
-            stays intact.
-          </Text>
-        </Box>
-        {role === 'admin' && (
-          <Button colorScheme="brand" onClick={onOpen}>
-            Add employee
-          </Button>
-        )}
-      </HStack>
+      <PageHeader
+        title="Employees"
+        description={`${employees.data?.length ?? 0} people on file. Deactivation is a soft delete, so history stays intact.`}
+        actions={
+          role === 'admin' ? (
+            <Button colorScheme="brand" onClick={onOpen}>
+              Add employee
+            </Button>
+          ) : undefined
+        }
+      />
 
       <Stack
         direction={{ base: 'column', md: 'row' }}
@@ -170,8 +167,9 @@ export function EmployeesPage() {
       </Stack>
 
       <QueryState isLoading={employees.isLoading} error={employees.error}>
-        <TableContainer bg="white" borderRadius="lg" boxShadow="sm">
-          <Table size="sm">
+        <Card p={0} overflow="hidden">
+          <TableContainer overflowX="auto">
+            <Table size="sm" variant="simple">
             <Thead bg="gray.50">
               <Tr>
                 <Th>Code</Th>
@@ -222,7 +220,8 @@ export function EmployeesPage() {
               ))}
             </Tbody>
           </Table>
-        </TableContainer>
+          </TableContainer>
+        </Card>
         {filtered.length === 0 && (
           <Text mt={4} color="gray.500">
             No employees match these filters.

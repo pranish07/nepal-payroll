@@ -1,7 +1,9 @@
-import { Alert, AlertIcon, Badge, Box, Button, HStack, Heading, Select, SimpleGrid, Stat, StatLabel, StatNumber, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, useToast } from '@chakra-ui/react';
+import { Alert, AlertIcon, Badge, Box, Button, HStack, Select, SimpleGrid, Stat, StatLabel, StatNumber, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr, useToast } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Card } from '../components/Card';
+import { PageHeader } from '../components/PageHeader';
 import { DraftBanner, QueryState } from '../components/PageState';
 import { ApiError, api } from '../lib/api';
 import { formatDateTime, formatNprPaisa } from '../lib/format';
@@ -40,54 +42,49 @@ export function PayrollRunPage() {
     <QueryState isLoading={run.isLoading} error={run.error}>
       {run.data && (
         <Box>
-          <HStack justify="space-between" align="flex-end" mb={4} wrap="wrap" spacing={3}>
-            <Box>
-              <HStack>
-                <Heading size="lg">{run.data.period.label}</Heading>
+          <PageHeader
+            title={run.data.period.label}
+            description={`${run.data.period.startDate} → ${run.data.period.endDate} · policy version ${run.data.policyVersion} · ${run.data.period.fiscalYearLabel}`}
+            actions={
+              <HStack wrap="wrap" spacing={2}>
                 <Badge colorScheme={run.data.status === 'FINALIZED' ? 'green' : 'orange'}>
                   {run.data.status}
                 </Badge>
+                <Select
+                  size="sm"
+                  width="160px"
+                  bg="white"
+                  value={group}
+                  onChange={(event) => setGroup(event.target.value as typeof group)}
+                >
+                  <option value="ALL">All employees</option>
+                  <option value="SSF">SSF only</option>
+                  <option value="NON_SSF">Non-SSF only</option>
+                </Select>
+                {role === 'admin' && run.data.status === 'DRAFT' && (
+                  <Button
+                    size="sm"
+                    colorScheme="green"
+                    isLoading={finalize.isPending}
+                    onClick={() => finalize.mutate()}
+                  >
+                    Finalize run
+                  </Button>
+                )}
+                {role === 'admin' && (
+                  <Button
+                    as={RouterLink}
+                    to={`/runs/${run.data.id}/admin-cost`}
+                    size="sm"
+                    colorScheme="purple"
+                    variant="outline"
+                  >
+                    Admin cost
+                  </Button>
+                )}
               </HStack>
-              <Text color="gray.600">
-                {run.data.period.startDate} → {run.data.period.endDate} · policy version{' '}
-                {run.data.policyVersion} · {run.data.period.fiscalYearLabel}
-              </Text>
-            </Box>
-            <HStack>
-              <Select
-                size="sm"
-                width="160px"
-                bg="white"
-                value={group}
-                onChange={(event) => setGroup(event.target.value as typeof group)}
-              >
-                <option value="ALL">All employees</option>
-                <option value="SSF">SSF only</option>
-                <option value="NON_SSF">Non-SSF only</option>
-              </Select>
-              {role === 'admin' && run.data.status === 'DRAFT' && (
-                <Button
-                  size="sm"
-                  colorScheme="green"
-                  isLoading={finalize.isPending}
-                  onClick={() => finalize.mutate()}
-                >
-                  Finalize run
-                </Button>
-              )}
-              {role === 'admin' && (
-                <Button
-                  as={RouterLink}
-                  to={`/runs/${run.data.id}/admin-cost`}
-                  size="sm"
-                  colorScheme="purple"
-                  variant="outline"
-                >
-                  Admin cost
-                </Button>
-              )}
-            </HStack>
-          </HStack>
+            }
+          />
 
           {run.data.status === 'DRAFT' && <DraftBanner />}
           {run.data.status === 'FINALIZED' && (
@@ -115,8 +112,9 @@ export function PayrollRunPage() {
             </Alert>
           ))}
 
-          <TableContainer bg="white" borderRadius="lg" boxShadow="sm">
-            <Table size="sm">
+          <Card p={0} overflow="hidden">
+            <TableContainer overflowX="auto">
+              <Table size="sm" variant="simple">
               <Thead bg="gray.50">
                 <Tr>
                   <Th>Code</Th>
@@ -166,7 +164,8 @@ export function PayrollRunPage() {
                 ))}
               </Tbody>
             </Table>
-          </TableContainer>
+            </TableContainer>
+          </Card>
 
           <HStack mt={4} fontSize="sm" color="gray.600" wrap="wrap" spacing={5}>
             <Text>Total deductions: {formatNprPaisa(run.data.totals.totalDeductionsPaisa)}</Text>
