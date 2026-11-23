@@ -93,7 +93,7 @@ export function renderPayslipHtml(view: EmployeePayslipView): string {
       <tbody>
         ${renderRows(view.earnings)}
       </tbody>
-      <tfoot><tr><th>Gross pay</th><td class="amount">${formatNprPaisa(view.grossPaisa)}</td></tr></tfoot>
+      <tfoot><tr><th>Gross pay</th><td class="amount">NPR ${formatNprPaisa(view.grossPaisa)}</td></tr></tfoot>
     </table>
   </section>
 
@@ -104,7 +104,7 @@ export function renderPayslipHtml(view: EmployeePayslipView): string {
       <tbody>
         ${renderRows(view.deductions, 'No deductions this period.')}
       </tbody>
-      <tfoot><tr><th>Total deductions</th><td class="amount">${formatNprPaisa(view.totalDeductionsPaisa)}</td></tr></tfoot>
+      <tfoot><tr><th>Total deductions</th><td class="amount">NPR ${formatNprPaisa(view.totalDeductionsPaisa)}</td></tr></tfoot>
     </table>
   </section>
 
@@ -155,12 +155,12 @@ export function renderPayslipHtml(view: EmployeePayslipView): string {
     <h3>Year-to-date (including this payslip)</h3>
     <table class="compact">
       <tbody>
-        <tr><th>Gross pay</th><td class="amount">${formatNprPaisa(view.ytd.grossPaisa)}</td>
-            <th>Taxable cash</th><td class="amount">${formatNprPaisa(view.ytd.taxableCashPaisa)}</td></tr>
-        <tr><th>SSF (employee)</th><td class="amount">${formatNprPaisa(view.ytd.ssfEmployeePaisa)}</td>
-            <th>TDS</th><td class="amount">${formatNprPaisa(view.ytd.tdsPaisa)}</td></tr>
-        <tr><th>Employer SSF</th><td class="amount">${formatNprPaisa(view.ytd.ssfEmployerPaisa)}</td>
-            <th>Net paid</th><td class="amount">${formatNprPaisa(view.ytd.netPaisa)}</td></tr>
+        <tr><th>Gross pay</th><td class="amount">NPR ${formatNprPaisa(view.ytd.grossPaisa)}</td>
+            <th>Taxable cash</th><td class="amount">NPR ${formatNprPaisa(view.ytd.taxableCashPaisa)}</td></tr>
+        <tr><th>SSF (employee)</th><td class="amount">NPR ${formatNprPaisa(view.ytd.ssfEmployeePaisa)}</td>
+            <th>TDS</th><td class="amount">NPR ${formatNprPaisa(view.ytd.tdsPaisa)}</td></tr>
+        <tr><th>Employer SSF</th><td class="amount">NPR ${formatNprPaisa(view.ytd.ssfEmployerPaisa)}</td>
+            <th>Net paid</th><td class="amount">NPR ${formatNprPaisa(view.ytd.netPaisa)}</td></tr>
       </tbody>
     </table>
   </section>
@@ -184,7 +184,7 @@ function renderRows(lines: PayslipLine[], emptyMessage = 'No earnings this perio
         <td>${escapeHtml(line.label)}${
           line.detail ? `<span class="detail">${escapeHtml(line.detail)}</span>` : ''
         }</td>
-        <td class="amount">${formatNprPaisa(line.amountPaisa)}</td>
+        <td class="amount">NPR ${formatNprPaisa(line.amountPaisa)}</td>
       </tr>`,
     )
     .join('');
