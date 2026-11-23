@@ -24,7 +24,8 @@ export interface BuildAppOptions {
 const webDist = fileURLToPath(new URL('../../web/dist/', import.meta.url));
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
-  const dbPath = options.dbPath ?? resolve(process.env.DB_PATH ?? 'data/payroll.db');
+  const configuredPath = options.dbPath ?? process.env.DB_PATH ?? 'data/payroll.db';
+  const dbPath = configuredPath === ':memory:' ? ':memory:' : resolve(configuredPath);
   if (dbPath !== ':memory:') mkdirSync(dirname(dbPath), { recursive: true });
 
   const database = createDatabase(dbPath);

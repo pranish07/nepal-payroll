@@ -5,7 +5,11 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP="$(mktemp -d)"
-PORT="${VERIFY_PORT:-3210}"
+if [[ -n "${VERIFY_PORT:-}" ]]; then
+  PORT="$VERIFY_PORT"
+else
+  PORT="$(node -e "const net=require('node:net');const s=net.createServer();s.listen(0,'127.0.0.1',()=>{process.stdout.write(String(s.address().port));s.close();});")"
+fi
 SERVER_PID=""
 CLEANED=0
 
