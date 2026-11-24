@@ -62,6 +62,10 @@ Open `samples/index.html` for committed example payslips (HTML and, where Chrome
 | `npm run samples` | Regenerate committed sample payslips from the seed data |
 | `npm run verify` | Clean-clone verification in a temporary directory (see below) |
 
+## Troubleshooting
+
+- **Schema changed after pulling an older checkout.** There are no deployed databases, so the committed migration is edited in place rather than layered. Delete the old database before starting: remove `data/payroll.db` (and any `data/payroll.db-wal` / `data/payroll.db-shm` siblings) and run `npm start` again. The app recreates the schema and reseeds the demo data.
+
 ## Architecture at a glance
 
 ```text

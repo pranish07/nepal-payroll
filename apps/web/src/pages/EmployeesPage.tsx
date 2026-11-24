@@ -94,7 +94,7 @@ export function EmployeesPage() {
         department: form.department.trim(),
         designation: form.designation.trim(),
         employmentType: form.employmentType,
-        ssfNumber: form.employmentType === 'SSF' ? form.ssfNumber.trim() : null,
+        ssfNumber: form.employmentType === 'SSF' ? form.ssfNumber.trim() || null : null,
         basicPaisa,
         joiningDate: form.joiningDate,
         bankName: form.bankName.trim(),
@@ -277,8 +277,8 @@ export function EmployeesPage() {
                   <option value="NON_SSF">Non-SSF</option>
                 </Select>
               </FormControl>
-              <FormControl isRequired={form.employmentType === 'SSF'}>
-                <FormLabel>SSF number</FormLabel>
+              <FormControl>
+                <FormLabel>SSF number (optional)</FormLabel>
                 <Input
                   value={form.ssfNumber}
                   onChange={(event) => setForm({ ...form, ssfNumber: event.target.value })}

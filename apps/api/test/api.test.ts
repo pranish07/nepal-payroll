@@ -800,7 +800,7 @@ describe('API: employee lifecycle and constraints', () => {
     expect(runAfter.body.payslips.some((payslip) => payslip.code === 'EMP-777')).toBe(false);
   });
 
-  it('rejects duplicate codes, missing SSF numbers, and unknown periods', async () => {
+  it('rejects duplicate codes and unknown periods while allowing an SSF employee without a number', async () => {
     const app = await makeApp();
     const duplicate = await call(app, 'POST', '/api/employees', {
       payload: {
@@ -819,7 +819,7 @@ describe('API: employee lifecycle and constraints', () => {
     });
     expect(duplicate.statusCode).toBe(409);
 
-    const missingSsf = await call(app, 'POST', '/api/employees', {
+    const optionalSsf = await call(app, 'POST', '/api/employees', {
       payload: {
         code: 'EMP-778',
         fullName: 'No SSF',
@@ -834,7 +834,8 @@ describe('API: employee lifecycle and constraints', () => {
         bankBranch: 'Branch',
       },
     });
-    expect(missingSsf.statusCode).toBe(400);
+    expect(optionalSsf.statusCode).toBe(201);
+    expect((optionalSsf.json() as { ssfNumber: string | null }).ssfNumber).toBeNull();
 
     const unknownPeriod = await call(app, 'POST', '/api/periods/nope/run');
     expect(unknownPeriod.statusCode).toBe(404);

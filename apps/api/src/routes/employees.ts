@@ -72,16 +72,8 @@ export function registerEmployeeRoutes(app: FastifyInstance, database: AppDataba
     '/api/employees/:id',
     { preHandler: requireAdmin },
     async (request) => {
-      const current = getEmployee(database, request.params.id);
       const body = parseBody(updateEmployeeSchema, request.body);
-      const mergedType = body.employmentType ?? current.employmentType;
-      const mergedSsfNumber = body.ssfNumber ?? current.ssfNumber;
-      if (mergedType === 'SSF' && !mergedSsfNumber) {
-        throw badRequest('An SSF employee needs a (dummy) SSF number.', {
-          field: 'ssfNumber',
-        });
-      }
-      if (mergedType === 'NON_SSF' && body.employmentType === 'NON_SSF' && !body.ssfNumber) {
+      if (body.employmentType === 'NON_SSF' && !body.ssfNumber) {
         body.ssfNumber = null;
       }
       const employee = updateEmployee(database, request.params.id, body);

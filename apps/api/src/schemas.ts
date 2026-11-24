@@ -29,17 +29,7 @@ const employeeFields = {
   bankBranch: z.string().trim().min(1).max(80),
 };
 
-export const createEmployeeSchema = z
-  .object(employeeFields)
-  .superRefine((value, context) => {
-    if (value.employmentType === 'SSF' && !value.ssfNumber) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['ssfNumber'],
-        message: 'An SSF employee needs a (dummy) SSF number.',
-      });
-    }
-  });
+export const createEmployeeSchema = z.object(employeeFields);
 
 export const updateEmployeeSchema = z.object(employeeFields).partial();
 

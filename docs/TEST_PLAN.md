@@ -37,7 +37,7 @@ Each test builds a fresh Fastify app over an in-memory SQLite database, applies 
 - Advance lifecycle over multiple periods: cap respected, balances derived from ledger, settlement, changed and null installment behavior.
 - Effective-dated allowances (add in period 3, stop from period 5) and reimbursements (one-time vs recurring, stop from period 4).
 - Versioned config: new policy applies only from its effective period; policy rows have no update route; invalid slab sets and negative money rejected.
-- Employee lifecycle: create, patch, soft delete, duplicate code 409, SSF without number 400, unknown period/employee 404.
+- Employee lifecycle: create, patch, soft delete, duplicate code 409, SSF employee without an SSF number succeeds, unknown period/employee 404.
 
 ## 3. Web (`apps/web`)
 

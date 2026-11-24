@@ -11,7 +11,7 @@ Source of truth: `apps/api/migrations/0001_init.sql`. Drizzle definitions in `ap
 | `tax_slab_sets` | Immutable slab sets | unique `(fiscal_year_id, name)` |
 | `tax_slabs` | Marginal slabs | ordinal ≥ 1, `rate_bps` 0–10,000, final `upper_bound_paisa` may be NULL, unique `(slab_set_id, ordinal)` |
 | `policies` | Append-only versioned configuration | unique `(fiscal_year_id, version)`, all rates validated by CHECK |
-| `employees` | Employee master and bank details | unique code; SSF employees must have an ssf_number; money non-negative |
+| `employees` | Employee master and bank details | unique code; `ssf_number` is optional for SSF employees and absent for non-SSF; money non-negative |
 | `allowance_types` | Catalog (Dearness/Conveyance seeded as system) | unique name; `is_system` flag |
 | `employee_allowances` | Effective-dated allowance assignments | stop period must differ from start period |
 | `reimbursements` | One-time (period-bound) or recurring (effective-dated, stoppable) | CHECK enforces the kind/period shape |

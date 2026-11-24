@@ -76,8 +76,7 @@ CREATE TABLE employees (
   bank_account_number TEXT NOT NULL,
   bank_branch TEXT NOT NULL,
   created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL,
-  CHECK (employment_type <> 'SSF' OR (ssf_number IS NOT NULL AND length(trim(ssf_number)) > 0))
+  updated_at TEXT NOT NULL
 );
 
 CREATE INDEX employees_status_idx ON employees(status);
