@@ -24,6 +24,14 @@ export function conflict(message: string, details?: unknown): AppError {
   return new AppError(409, 'CONFLICT', message, details);
 }
 
+export function periodFinalized(): AppError {
+  return new AppError(
+    409,
+    'PERIOD_FINALIZED',
+    'This period is finalized; secret components can only be set before finalization.',
+  );
+}
+
 export function badRequest(message: string, details?: unknown): AppError {
   return new AppError(400, 'BAD_REQUEST', message, details);
 }

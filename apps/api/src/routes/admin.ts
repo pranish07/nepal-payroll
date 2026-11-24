@@ -1,10 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type { AppDatabase } from '../db/client.js';
-import { parseBody } from '../errors.js';
+import { parseBody, periodFinalized } from '../errors.js';
 import { getEmployee } from '../repositories/employees.js';
 import { listSecretComponents, setSecretComponent } from '../repositories/admin.js';
 import { writeAudit } from '../repositories/audit.js';
 import { getPeriodOrThrow } from '../repositories/policy.js';
+import { findRunByPeriod } from '../repositories/runs.js';
 import { requireAdmin } from '../roles.js';
 import { groupQuerySchema, secretComponentSchema } from '../schemas.js';
 import { getAdminCostView } from '../services/admin-cost-service.js';
@@ -32,6 +33,9 @@ export function registerAdminRoutes(app: FastifyInstance, database: AppDatabase)
       getEmployee(database, request.params.id);
       const body = parseBody(secretComponentSchema, request.body);
       getPeriodOrThrow(database, body.periodId);
+      if (findRunByPeriod(database, body.periodId)?.status === 'FINALIZED') {
+        throw periodFinalized();
+      }
       const component = setSecretComponent(
         database,
         request.params.id,

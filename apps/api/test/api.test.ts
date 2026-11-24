@@ -350,6 +350,49 @@ describe('API: secret component isolation', () => {
     }
   });
 
+  it('accepts secret writes for periods with no run or a draft run, and rejects finalized periods', async () => {
+    const app = await makeApp();
+    const employeeId = '11111111-1111-4111-8111-111111111111';
+    const url = `/api/admin/employees/${employeeId}/secret-components`;
+
+    const beforeRun = await call(app, 'PUT', url, {
+      payload: { periodId: 'p-2083-02', amountPaisa: 111_000, note: 'before the run' },
+    });
+    expect(beforeRun.statusCode).toBe(200);
+    expect(beforeRun.json()).toMatchObject({ amountPaisa: 111_000 });
+
+    const draft = await json<RunDtoBody>(app, 'POST', '/api/periods/p-2083-02/run');
+    expect(draft.body.status).toBe('DRAFT');
+
+    const whileDraft = await call(app, 'PUT', url, {
+      payload: { periodId: 'p-2083-02', amountPaisa: 222_000, note: 'during the draft' },
+    });
+    expect(whileDraft.statusCode).toBe(200);
+    expect(whileDraft.json()).toMatchObject({ amountPaisa: 222_000 });
+
+    const finalized = await call(app, 'POST', `/api/runs/${draft.body.id}/finalize`);
+    expect(finalized.statusCode).toBe(200);
+
+    const rejected = await call(app, 'PUT', url, {
+      payload: { periodId: 'p-2083-02', amountPaisa: 999_000, note: 'too late' },
+    });
+    expect(rejected.statusCode).toBe(409);
+    expect(rejected.json()).toMatchObject({
+      code: 'PERIOD_FINALIZED',
+      message:
+        'This period is finalized; secret components can only be set before finalization.',
+    });
+
+    const stored = await json<Array<{ periodId: string; amountPaisa: number; note: string | null }>>(
+      app,
+      'GET',
+      url,
+    );
+    expect(
+      stored.body.find((component) => component.periodId === 'p-2083-02'),
+    ).toMatchObject({ amountPaisa: 222_000, note: 'during the draft' });
+  });
+
   it('shows live secret cost for drafts and frozen snapshots for finalized runs', async () => {
     const app = await makeApp();
     const employeeId = '11111111-1111-4111-8111-111111111111';
@@ -382,9 +425,15 @@ describe('API: secret component isolation', () => {
       `/api/admin/runs/${recalculated.body.id}/cost-view`,
     );
 
-    await call(app, 'PUT', `/api/admin/employees/${employeeId}/secret-components`, {
-      payload: { periodId: 'p-2083-01', amountPaisa: 9_999_999, note: 'changed later' },
-    });
+    const blocked = await call(
+      app,
+      'PUT',
+      `/api/admin/employees/${employeeId}/secret-components`,
+      {
+        payload: { periodId: 'p-2083-01', amountPaisa: 9_999_999, note: 'changed later' },
+      },
+    );
+    expect(blocked.statusCode).toBe(409);
     const snapshotAfter = await json<AdminCostBody>(
       app,
       'GET',

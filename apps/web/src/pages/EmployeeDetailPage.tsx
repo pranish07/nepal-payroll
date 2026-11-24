@@ -1079,6 +1079,8 @@ function SecretTab({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ periodId: '', amount: '', note: '' });
+  const selectedPeriod = periods.find((period) => period.id === form.periodId);
+  const selectedFinalized = selectedPeriod?.runStatus === 'FINALIZED';
 
   const save = useMutation({
     mutationFn: () => {
@@ -1149,8 +1151,13 @@ function SecretTab({
             onChange={(event) => setForm({ ...form, periodId: event.target.value })}
           >
             {periods.map((period) => (
-              <option key={period.id} value={period.id}>
+              <option
+                key={period.id}
+                value={period.id}
+                disabled={period.runStatus === 'FINALIZED'}
+              >
                 {period.label}
+                {period.runStatus === 'FINALIZED' ? ' (finalized)' : ''}
               </option>
             ))}
           </Select>
@@ -1180,13 +1187,18 @@ function SecretTab({
         <Button
           size="sm"
           colorScheme="purple"
-          isDisabled={!form.periodId || !form.amount}
+          isDisabled={!form.periodId || !form.amount || selectedFinalized}
           isLoading={save.isPending}
           onClick={() => save.mutate()}
         >
           Save secret
         </Button>
       </HStack>
+      {selectedFinalized && (
+        <Text fontSize="sm" color="purple.800" mt={3}>
+          This period is finalized. Secret components can only be set before finalization.
+        </Text>
+      )}
     </Box>
   );
 }

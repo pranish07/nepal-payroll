@@ -48,7 +48,7 @@ Ambiguities in the brief were resolved with the following Architecture Decision 
 
 **Decision.** No secret parameter in the engine; no secret field in employee DTOs; all secret access in `repositories/admin.ts`; ESLint blocks employee-facing modules from importing admin modules; finalize snapshots cost into `payslip_admin_costs`. A sentinel test scans employee responses, HTML, logs, and every DB table.
 
-**Consequences.** Adding a new employee-facing field cannot accidentally include the secret without changing the DTO and failing tests. Admin cost history is frozen at finalization.
+**Consequences.** Adding a new employee-facing field cannot accidentally include the secret without changing the DTO and failing tests. Admin cost history is frozen at finalization. Because a finalized run never re-reads the secret table, the admin write route refuses secret changes for a finalized period with `409 PERIOD_FINALIZED`; this prevents storing an amount that the system would never use. Draft periods and periods with no run still accept writes.
 
 ## ADR-007 — One-transaction recomputing finalize, idempotent and immutable
 
