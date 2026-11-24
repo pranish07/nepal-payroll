@@ -14,9 +14,9 @@ npm run verify           # clean-clone end-to-end check
 
 | File | Covers |
 | --- | --- |
-| `vectors.test.ts` | Golden vectors A–G exactly as specified in the brief, including annual tax settlement over 12 months, slab boundaries, one-off taxable items, mid-period joiner, and admin cost separation |
+| `vectors.test.ts` | Golden vectors A–G, including annual tax settlement over 12 months, slab boundaries, one-off taxable items, mid-period joiner, and admin cost separation |
 | `invariants.test.ts` | fast-check properties: non-negative net/deductions, gross = sum of earnings, deduction totals, advance cap formula, slab additivity, rounding stability |
-| `edge-cases.test.ts` | §6.6 edge cases: zero values, unbounded last slab, invalid slab sets, out-of-range dates, null overtime override, zero installment, negative/out-of-range inputs |
+| `edge-cases.test.ts` | Engine edge cases: zero values, unbounded last slab, invalid slab sets, out-of-range dates, null overtime override, zero installment, negative/out-of-range inputs |
 | `money-format-words.test.ts` | Integer paisa rounding (half-up), bps/hour formatting, Nepali-style grouping, amount-in-words |
 
 Coverage thresholds (v8): lines 95%, functions 95%, branches 90%, statements 95% over `packages/core/src/**` (types excluded).

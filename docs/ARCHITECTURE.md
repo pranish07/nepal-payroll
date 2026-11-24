@@ -57,7 +57,7 @@ The demo role header is the access-control boundary. A production deployment mus
 
 - All stored monetary values are non-negative `INTEGER` paisa.
 - All rates are integer basis points; hours are integer hundredths.
-- Conversions use `BigInt` intermediates through `mulDivRound(a, b, den)` (half-up) and `mulDivFloor()` where the brief requires truncation (advance cap, one-third exemption).
+- Conversions use `BigInt` intermediates through `mulDivRound(a, b, den)` (half-up) and `mulDivFloor()` for values that must truncate (advance cap, one-third exemption).
 - No float arithmetic, `Math.round()`, or `toFixed()` is used for money. ESLint bans `Math.round` globally and `toFixed()` calls. UI parsing uses string splitting, not float multiplication.
 
 ## Dates
@@ -76,7 +76,7 @@ The web app (`apps/web`) is mobile-first:
 - Shared `components/Card.tsx` and `components/PageHeader.tsx` give pages a consistent card surface and responsive title/action row.
 - Tables are wrapped in horizontally scrollable containers (`overflowX="auto"`) with `variant="simple"` and `size="sm"`, so wide payrolls remain usable on phones.
 - Filters and action rows use `Stack`/`Flex` with `base`/`md` responsive props instead of fixed widths.
-- Money is always rendered through `formatNprPaisa()` (one `NPR` label, one decimal dot) after the double-dot fix.
+- Money is always rendered through `formatNprPaisa()`, so each amount shows one `NPR` label and one decimal separator.
 
 ## Deployment shape
 

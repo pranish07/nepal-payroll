@@ -10,7 +10,7 @@ import {
 } from '../src/index.js';
 import { baseInput, policy, shrawan } from './fixtures.js';
 
-describe('edge cases required by the brief', () => {
+describe('engine edge cases', () => {
   it('excludes an employee who joins after the period ends', () => {
     expect(() =>
       calculatePayslip(baseInput({ joiningDate: '2026-08-17' }), policy),

@@ -1,6 +1,6 @@
 # Payroll rules
 
-All formulas operate on integer **paisa** unless stated otherwise. Rates are basis points (bps): `10_000 bps = 100%`. Overtime hours are hundredths of an hour. All intermediate multiplications/divisions use `BigInt`, with half-up `mulDivRound()` except where `mulDivFloor()` is specified.
+All formulas operate on integer **paisa** unless stated otherwise. Rates are basis points (bps): `10_000 bps = 100%`. Overtime hours are hundredths of an hour. All intermediate multiplications/divisions use `BigInt`, with half-up `mulDivRound()` except for the truncating `mulDivFloor()` calculations.
 
 ## Period and proration
 

@@ -76,7 +76,7 @@ Design choices and ambiguous requirements are recorded as Architecture Decision 
 
 ## ADR-010 — Approximate Gregorian dates, no BS library
 
-**Context.** The brief lists Nepali month labels but does not require a Bikram Sambat conversion algorithm.
+**Context.** The requirements list Nepali month labels but do not require a Bikram Sambat conversion algorithm.
 
 **Decision.** Store explicit approximate ISO Gregorian boundaries for the 12 periods. No BS conversion dependency.
 
@@ -100,7 +100,7 @@ Design choices and ambiguous requirements are recorded as Architecture Decision 
 
 ## ADR-013 — Basic pay is first-class; DA/Conveyance are system allowances
 
-**Context.** The brief distinguishes fixed allowances and dynamic catalog allowances.
+**Context.** The requirements distinguish fixed allowances and dynamic catalog allowances.
 
 **Decision.** Basic pay is a column on the employee. Dearness Allowance and Conveyance are seeded `is_system = 1` allowance types with assignments. Other allowance types are admin-created and assignments are effective-dated with optional stop.
 

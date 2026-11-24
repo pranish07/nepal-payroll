@@ -40,7 +40,7 @@ describe('golden vector A: SSF employee with everything switched on', () => {
 
   const result = calculatePayslip(input, policy);
 
-  it('matches every derived figure in the brief', () => {
+  it('matches every derived figure in the golden vectors', () => {
     expect(result.overtimePaisa).toBe(npr(5_000));
     expect(result.grossPaisa).toBe(npr(101_000));
     expect(result.taxableCashPaisa).toBe(npr(97_000));
