@@ -6,7 +6,7 @@ Money is integer **paisa**. Rates are integer **basis points**. Overtime hours a
 
 ## Quick start
 
-Requires Node.js 20+ (`.nvmrc` pins 22; the project is also verified on newer Node).
+Requires Node.js 20+ (`.nvmrc` pins 22). Tested locally on Node 20.20.2, 22.23.5, and 25.1.0; CI covers Node 20 and 22 on Ubuntu and Node 22 on Windows.
 
 ```bash
 npm install
@@ -22,7 +22,7 @@ Then open **http://localhost:3000**. `npm start`:
 
 The database is written to `data/payroll.db` by default. Override with `DB_PATH=:memory:` or another path; override the port with `PORT=...`.
 
-A committed `.npmrc` sets `ignore-scripts=true` (ADR-017): `better-sqlite3@13` ships prebuilt binaries in its tarball, and npm 11 otherwise tries a `node-gyp` rebuild on machines without a C++ toolchain. No dependency here needs a lifecycle script.
+A committed `.npmrc` keeps lifecycle scripts enabled (ADR-017): `better-sqlite3` is pinned to `12.9.0`, whose install script uses `prebuild-install` to download a prebuilt binary matching the platform and Node ABI. No C++ toolchain is needed on the normal path. The pin matters because 12.10 and later stopped publishing Node 20 prebuilds.
 
 ### Try it
 
@@ -164,4 +164,4 @@ npm run verify
 
 The script clones the repo (or copies the working tree if there is no origin) into a fresh temp directory, runs `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm start`, probes the API and web HTML, checks documented clean-clone wall time, and prints an artifact summary.
 
-Measured from a fresh clone on Windows with Node 25.1.0: **about two minutes** including `npm ci`, lint, typecheck, all tests, web build, and live HTTP/API/payslip probes. The exact value varies by machine; the script prints `CLEAN_CLONE_SECONDS` on every run. Other Node versions and operating systems were not tested locally; the CI matrix covers Node 20 and 22 on Ubuntu and Node 22 on Windows.
+Measured from a fresh clone on Windows with Node 25.1.0: **about two minutes** including `npm ci`, lint, typecheck, all tests, web build, and live HTTP/API/payslip probes. The exact value varies by machine; the script prints `CLEAN_CLONE_SECONDS` on every run. A fresh `npm ci` followed by lint, typecheck, and the full test suite also passes under Node 20.20.2 and Node 22.23.5 on Windows. The CI matrix covers Node 20 and 22 on Ubuntu and Node 22 on Windows; other operating systems were not tested locally.

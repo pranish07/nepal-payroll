@@ -130,13 +130,17 @@ Design choices and ambiguous requirements are recorded as Architecture Decision 
 
 **Consequences.** Finalized documents are self-contained; the admin cost view joins current employee codes for convenience but amounts come from snapshots.
 
-## ADR-017 — Disable npm install scripts for bundled native prebuilds
+## ADR-017 — Pin better-sqlite3 12.9.0 for prebuilds across Node 20–25
 
-**Context.** `better-sqlite3@13` ships prebuilt `.node` binaries in its npm tarball for Linux, macOS, and Windows. npm 11 nevertheless auto-runs `node-gyp rebuild` for any package with `binding.gyp` and no `install` script. On machines without Visual Studio / a C++ toolchain, a clean `npm install` or `npm ci` then fails even though the working binary is already present.
+**Status.** Accepted. Supersedes an earlier `better-sqlite3@13` plus `ignore-scripts=true` setup.
 
-**Decision.** Commit a root `.npmrc` with `ignore-scripts=true`. No dependency in this project needs a lifecycle script: esbuild/Vite use optional platform packages, and better-sqlite3 loads its bundled prebuild at require time.
+**Context.** CI must cover Node 20 as well as Node 22. `better-sqlite3@13` declares Node >=22, and its bundled Windows binary crashes on Node 20. `better-sqlite3@12.9.0` supports Node 20, 22, 23, 24, and 25 and publishes an ABI-specific prebuilt binary for each. Versions 12.10 and later stopped publishing Node 20 prebuilds, so a caret range would resolve to a version that silently needs a source build on Node 20. Version 12 downloads its prebuild through `prebuild-install` in an install script, which means lifecycle scripts must stay enabled.
 
-**Consequences.** Clean installs work on a bare Node installation. Risk: a future dependency that genuinely needs a postinstall step would need an explicit exception or an ADR revision.
+**Decision.** Pin `better-sqlite3` to exactly `12.9.0` in `apps/api/package.json`, and set `ignore-scripts=false` in the committed `.npmrc`. The install script downloads the prebuilt binary for the current platform and Node ABI. CI runs Node 20 and 22 on Ubuntu plus Node 22 on Windows.
+
+**Alternatives considered.** Keep `better-sqlite3@13` and drop Node 20 (rejected because Node 20 is required in the matrix); move to `node:sqlite` (not available on Node 20); commit native binaries per platform (not portable); compile from source on every install (requires a C++ toolchain on developer machines).
+
+**Consequences.** A fresh `npm ci` works on Node 20, 22, and 25 without Visual Studio or a C++ compiler because the prebuild download is the normal path. The install needs network access to fetch the prebuild; if that fails, `prebuild-install` falls back to `node-gyp`, and the CI runners provide the toolchain. Upgrading better-sqlite3 later requires checking that Node 20 prebuilds still exist or dropping Node 20 deliberately.
 
 ## ADR-018 — React web app instead of React Native
 
